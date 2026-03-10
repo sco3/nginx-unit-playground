@@ -12,7 +12,7 @@ Benchmark results comparing different server configurations for handling HTTP PO
 ## Results Summary
 
 | Server | Requests/sec | Avg Latency | P50 Latency | P99 Latency | Total Time |
-|--------|-------------:|------------:|------------:|------------:|------------:|-----------:|
+|--------|-------------:|------------:|------------:|------------:|-----------:|
 | **Go Unit** | 43,230.28 | 0.0002s | 0.0002s | 0.0007s | 0.2313s |
 | **Python Unit** | 14,799.43 | 0.0007s | 0.0006s | 0.0017s | 0.6757s |
 | **Litestar + Uvicorn** | 7,006.27 | 0.0014s | 0.0014s | 0.0021s | 1.4273s |
