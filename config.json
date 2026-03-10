@@ -1,0 +1,39 @@
+{
+  "listeners": {
+    "*:8333": {
+      "pass": "routes"
+    }
+  },
+  "routes": [
+    {
+      "match": {
+        "uri": "/go/*"
+      },
+      "action": {
+        "pass": "applications/go-app"
+      }
+    },
+    {
+      "action": {
+        "pass": "applications/python-app"
+      }
+    }
+  ],
+  "applications": {
+    "python-app": {
+      "type": "python 3.13",
+      "processes": 1,
+      "working_directory": "/home/dz/tmp/free-thread-web",
+      "path": ".",
+      "module": "main",
+      "callable": "app",
+      "home": "/home/dz/tmp/free-thread-web/.venv"
+    },
+    "go-app": {
+      "type": "go",
+      "processes": 1,
+      "working_directory": "/home/dz/tmp/free-thread-web",
+      "executable": "unit"
+    }
+  }
+}
