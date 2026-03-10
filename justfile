@@ -53,6 +53,10 @@ bench-python-uvicorn:
 bench-litestar-uvicorn:
     hey -n 10000 -c 10 -m POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8444/items
 
+## Benchmark Litestar unit server (10k requests, 10 concurrency)
+bench-litestar-unit:
+    hey -n 10000 -c 10 -m POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8333/litestar/items
+
 ## Benchmark Go Unit server (10k requests, 10 concurrency)
 bench-go-unit:
     hey -n 10000 -c 10 -m POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8333/go/items
@@ -69,6 +73,10 @@ test-python-curl:
 ## Test Unit nginx endpoint with curl
 test-unit-curl:
     curl -X POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8333/items
+
+## Test Litestar Unit nginx endpoint with curl
+test-unit-litestar-curl:
+    curl -X POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8333/litestar/items
 
 ## Test Go Unit endpoint with curl
 test-go-curl:

@@ -14,7 +14,8 @@ Benchmark results comparing different server configurations for handling HTTP PO
 | Server | Requests/sec | Avg Latency | P50 Latency | P99 Latency | Total Time |
 |--------|-------------:|------------:|------------:|------------:|-----------:|
 | **Go Unit** | 43,230.28 | 0.0002s | 0.0002s | 0.0007s | 0.2313s |
-| **Python Unit** | 14,799.43 | 0.0007s | 0.0006s | 0.0017s | 0.6757s |
+| **FastAPI Unit** | 14,799.43 | 0.0007s | 0.0006s | 0.0017s | 0.6757s |
+| **Litestar Unit** | 16,753.43 | 0.0006s | 0.0005s | 0.0013s | 0.5969s |
 | **Litestar + Uvicorn** | 7,006.27 | 0.0014s | 0.0014s | 0.0021s | 1.4273s |
 | **FastAPI + Uvicorn** | 6,069.20 | 0.0016s | 0.0016s | 0.0020s | 1.6477s |
 | **FastAPI + Gunicorn** | 5,994.52 | 0.0017s | 0.0016s | 0.0021s | 1.6682s |
@@ -24,7 +25,8 @@ Benchmark results comparing different server configurations for handling HTTP PO
 ### Throughput (Requests/sec)
 ```
 Go Unit              █████████████████████████████████████████████ 43,230 req/s
-Python Unit          ███████████████ 14,799 req/s
+Litestar Unit        ████████████████ 16,753 req/s
+FastAPI Unit         ███████████████ 14,799 req/s
 Litestar + Uvicorn   ███████ 7,006 req/s
 FastAPI + Uvicorn    ██████ 6,069 req/s
 FastAPI + Gunicorn   ██████ 5,995 req/s
@@ -32,10 +34,11 @@ FastAPI + Gunicorn   ██████ 5,995 req/s
 
 ### Key Findings
 
-1. **Go Unit** is the fastest, handling **2.9x more requests** than Python Unit and **7.2x more** than FastAPI + Gunicorn
-2. **Python Unit** (free-threaded) performs **2.4x better** than FastAPI + Uvicorn
-3. **Litestar + Uvicorn** performs **15.5% better** than FastAPI + Uvicorn
-4. **FastAPI + Uvicorn** and **FastAPI + Gunicorn** have similar performance, with Uvicorn slightly ahead
+1. **Go Unit** is the fastest, handling **2.9x more requests** than Litestar Unit and **7.2x more** than FastAPI + Gunicorn
+2. **Litestar Unit** performs **13.2% better** than FastAPI Unit
+3. **FastAPI Unit** (free-threaded) performs **2.4x better** than FastAPI + Uvicorn
+4. **Litestar + Uvicorn** performs **15.5% better** than FastAPI + Uvicorn
+5. **FastAPI + Uvicorn** and **FastAPI + Gunicorn** have similar performance, with Uvicorn slightly ahead
 
 ## Detailed Results
 
@@ -45,11 +48,17 @@ FastAPI + Gunicorn   ██████ 5,995 req/s
 - **Fastest:** 0.0000 secs | **Slowest:** 0.0039 secs
 - **Status:** 10,000 × 200 responses
 
-### Python Unit Server
+### FastAPI Unit Server
 - **Endpoint:** `http://localhost:8333/items`
 - **Total:** 0.6757 secs
 - **Fastest:** 0.0001 secs | **Slowest:** 0.0033 secs
 - **Status:** 10,000 × 200 responses
+
+### Litestar Unit Server
+- **Endpoint:** `http://localhost:8333/litestar/items`
+- **Total:** 0.5969 secs
+- **Fastest:** 0.0001 secs | **Slowest:** 0.0023 secs
+- **Status:** 10,000 × 201 responses
 
 ### Litestar + Uvicorn Server
 - **Endpoint:** `http://localhost:8444/items`
@@ -74,7 +83,8 @@ FastAPI + Gunicorn   ██████ 5,995 req/s
 ```bash
 # Run all benchmarks
 just bench-go-unit
-just bench-python-unit
+just bench-fastapi-unit
+just bench-litestar-unit
 just bench-litestar-uvicorn
 just bench-fastapi-uvicorn
 just bench-fastapi-gunicorn

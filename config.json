@@ -14,18 +14,35 @@
       }
     },
     {
+      "match": {
+        "uri": "/litestar/*"
+      },
       "action": {
-        "pass": "applications/python-app"
+        "pass": "applications/litestar-app"
+      }
+    },
+    {
+      "action": {
+        "pass": "applications/fastapi-app"
       }
     }
   ],
   "applications": {
-    "python-app": {
+    "fastapi-app": {
       "type": "python 3.13",
       "processes": 1,
       "working_directory": "/home/dz/tmp/free-thread-web",
       "path": ".",
       "module": "main",
+      "callable": "app",
+      "home": "/home/dz/tmp/free-thread-web/.venv"
+    },
+    "litestar-app": {
+      "type": "python 3.13",
+      "processes": 1,
+      "working_directory": "/home/dz/tmp/free-thread-web",
+      "path": ".",
+      "module": "app",
       "callable": "app",
       "home": "/home/dz/tmp/free-thread-web/.venv"
     },
