@@ -10,3 +10,4 @@ wheels/
 .venv
 *.pid
 unit
+*.log

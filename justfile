@@ -14,6 +14,8 @@ serve:
 ## Start gunicorn production server (port 8222)
 serve-gunicorn:
     uv run gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8222 --log-level critical --daemon --pid gunicorn.pid
+    
+
 
 ## Stop uvicorn development server
 serve-stop:
@@ -23,6 +25,13 @@ serve-stop:
 stop-gunicorn:
     kill $(cat gunicorn.pid) && rm gunicorn.pid
 
+## Start litestar development server in background (port 8444)
+serve-litestar:
+    nohup uv run uvicorn app:app --port 8444 --no-access-log --log-level warning > litestar.log 2>&1 & echo $! > litestar.pid
+
+## Stop litestar development server
+stop-litestar:
+    kill $(cat litestar.pid) && rm litestar.pid
 
 # =============================================================================
 # Benchmarks
@@ -39,6 +48,10 @@ bench-python-gunicorn:
 ## Benchmark Python uvicorn server (10k requests, 10 concurrency)
 bench-python-uvicorn:
     hey -n 10000 -c 10 -m POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8111/items
+
+## Benchmark Python uvicorn server (10k requests, 10 concurrency)
+bench-litestar-uvicorn:
+    hey -n 10000 -c 10 -m POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8444/items
 
 ## Benchmark Go Unit server (10k requests, 10 concurrency)
 bench-go-unit:
@@ -60,6 +73,10 @@ test-unit-curl:
 ## Test Go Unit endpoint with curl
 test-go-curl:
     curl -X POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8333/go/items
+
+## Test Litestar + Uvicorn with curl
+test-litestar-curl:
+    curl -X POST -H "Content-Type: application/json" -d '{"name": "Test Item", "price": 9.99}' http://localhost:8444/items
 
 
 # =============================================================================

@@ -12,27 +12,30 @@ Benchmark results comparing different server configurations for handling HTTP PO
 ## Results Summary
 
 | Server | Requests/sec | Avg Latency | P50 Latency | P99 Latency | Total Time |
-|--------|-------------:|------------:|------------:|------------:|-----------:|
+|--------|-------------:|------------:|------------:|------------:|------------:|-----------:|
 | **Go Unit** | 43,230.28 | 0.0002s | 0.0002s | 0.0007s | 0.2313s |
 | **Python Unit** | 14,799.43 | 0.0007s | 0.0006s | 0.0017s | 0.6757s |
-| **Python Uvicorn** | 6,069.20 | 0.0016s | 0.0016s | 0.0020s | 1.6477s |
-| **Python Gunicorn** | 5,994.52 | 0.0017s | 0.0016s | 0.0021s | 1.6682s |
+| **Litestar + Uvicorn** | 7,006.27 | 0.0014s | 0.0014s | 0.0021s | 1.4273s |
+| **FastAPI + Uvicorn** | 6,069.20 | 0.0016s | 0.0016s | 0.0020s | 1.6477s |
+| **FastAPI + Gunicorn** | 5,994.52 | 0.0017s | 0.0016s | 0.0021s | 1.6682s |
 
 ## Performance Comparison
 
 ### Throughput (Requests/sec)
 ```
-Go Unit         █████████████████████████████████████████████ 43,230 req/s
-Python Unit     ███████████████ 14,799 req/s
-Python Uvicorn  ██████ 6,069 req/s
-Python Gunicorn ██████ 5,995 req/s
+Go Unit              █████████████████████████████████████████████ 43,230 req/s
+Python Unit          ███████████████ 14,799 req/s
+Litestar + Uvicorn   ███████ 7,006 req/s
+FastAPI + Uvicorn    ██████ 6,069 req/s
+FastAPI + Gunicorn   ██████ 5,995 req/s
 ```
 
 ### Key Findings
 
-1. **Go Unit** is the fastest, handling **2.9x more requests** than Python Unit and **7.2x more** than Python Gunicorn
-2. **Python Unit** (free-threaded) performs **2.4x better** than direct Python Uvicorn
-3. **Python Uvicorn** and **Python Gunicorn** have similar performance, with Uvicorn slightly ahead
+1. **Go Unit** is the fastest, handling **2.9x more requests** than Python Unit and **7.2x more** than FastAPI + Gunicorn
+2. **Python Unit** (free-threaded) performs **2.4x better** than FastAPI + Uvicorn
+3. **Litestar + Uvicorn** performs **15.5% better** than FastAPI + Uvicorn
+4. **FastAPI + Uvicorn** and **FastAPI + Gunicorn** have similar performance, with Uvicorn slightly ahead
 
 ## Detailed Results
 
@@ -48,13 +51,19 @@ Python Gunicorn ██████ 5,995 req/s
 - **Fastest:** 0.0001 secs | **Slowest:** 0.0033 secs
 - **Status:** 10,000 × 200 responses
 
-### Python Uvicorn Server
+### Litestar + Uvicorn Server
+- **Endpoint:** `http://localhost:8444/items`
+- **Total:** 1.4273 secs
+- **Fastest:** 0.0010 secs | **Slowest:** 0.0044 secs
+- **Status:** 10,000 × 201 responses
+
+### FastAPI + Uvicorn Server
 - **Endpoint:** `http://localhost:8111/items`
 - **Total:** 1.6477 secs
 - **Fastest:** 0.0010 secs | **Slowest:** 0.0045 secs
 - **Status:** 10,000 × 200 responses
 
-### Python Gunicorn Server
+### FastAPI + Gunicorn Server
 - **Endpoint:** `http://localhost:8222/items`
 - **Total:** 1.6682 secs
 - **Fastest:** 0.0012 secs | **Slowest:** 0.0050 secs
@@ -66,17 +75,21 @@ Python Gunicorn ██████ 5,995 req/s
 # Run all benchmarks
 just bench-go-unit
 just bench-python-unit
-just bench-python-uvicorn
-just bench-python-gunicorn
+just bench-litestar-uvicorn
+just bench-fastapi-uvicorn
+just bench-fastapi-gunicorn
 ```
 
 ## Server Setup
 
 ```bash
-# Start Python uvicorn server
+# Start FastAPI + uvicorn server
 uv run uvicorn main:app --port 8111
 
-# Start Python gunicorn server
+# Start Litestar + uvicorn server
+uv run uvicorn app:app --port 8444 --no-access-log --log-level warning
+
+# Start FastAPI + gunicorn server
 uv run gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:8222 --daemon
 
 # Start Unit nginx (requires unit service)
